@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable  //implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+     /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'user_id';
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +28,8 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
+        'gender',
+        'address',
         'password',
         'username',
         'role',
@@ -44,6 +53,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'gender' => 'boolean',
     ];
 
     
@@ -56,6 +66,11 @@ class User extends Authenticatable
     public function customer()
     {
         return $this->hasOne(Customer::class, 'customer_id', 'user_id');
+    }
+    // Example role check in User model
+    public function isAdmin()
+    {
+        return $this->role === 0;
     }
 
 }
